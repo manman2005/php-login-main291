@@ -320,7 +320,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#contact">
+                            <a class="nav-link" href="contact_admin.php">
                                 <i class="fas fa-envelope me-1"></i>ติดต่อแอดมิน
                             </a>
                         </li>

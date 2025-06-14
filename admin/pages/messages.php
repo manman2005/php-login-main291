@@ -14,42 +14,36 @@ $objCon = connectDB();
 
 // จัดการการตอบกลับ
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['message_id'])) {
-    $message_id = mysqli_real_escape_string($objCon, $_POST['message_id']);
+    $message_id = (int)$_POST['message_id'];
     $reply = mysqli_real_escape_string($objCon, $_POST['reply']);
     $admin_id = $_SESSION['user_login']['id'];
     $reply_at = date('Y-m-d H:i:s');
-    
+
     $sql = "UPDATE admin_messages 
             SET admin_reply = ?, 
                 admin_id = ?, 
                 reply_at = ?, 
                 status = 'replied' 
             WHERE id = ?";
-            
     $stmt = $objCon->prepare($sql);
     $stmt->bind_param("sisi", $reply, $admin_id, $reply_at, $message_id);
-    
+
     if ($stmt->execute()) {
         $_SESSION['success'] = 'ตอบกลับข้อความเรียบร้อยแล้ว';
     } else {
         $_SESSION['error'] = 'เกิดข้อผิดพลาดในการตอบกลับ';
     }
-    
+    $stmt->close();
     header("Location: messages.php");
     exit;
 }
 
-// อัพเดทสถานะเป็นอ่านแล้ว
-$sql = "UPDATE admin_messages SET status = 'read' WHERE status = 'unread'";
+// อัพเดทสถานะเป็นอ่านแล้ว เฉพาะข้อความที่ยังไม่ได้ตอบกลับ
+$sql = "UPDATE admin_messages SET status = 'read' WHERE status = 'unread' AND admin_reply IS NULL";
 mysqli_query($objCon, $sql);
 
 // ดึงข้อความทั้งหมด
-$sql = "SELECT am.*, u.fullname as user_name,
-        CASE 
-            WHEN am.admin_reply IS NOT NULL THEN 'ตอบกลับแล้ว'
-            WHEN am.status = 'read' THEN 'อ่านแล้ว'
-            ELSE 'ยังไม่ได้อ่าน'
-        END as status_text
+$sql = "SELECT am.*, u.fullname as user_name
         FROM admin_messages am
         LEFT JOIN users u ON am.user_id = u.id
         ORDER BY am.created_at DESC";
@@ -139,7 +133,15 @@ if ($messages === false) {
                             <div class="d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0"><?php echo htmlspecialchars($msg['subject']); ?></h5>
                                 <span class="badge <?php echo $msg['admin_reply'] ? 'bg-success' : ($msg['status'] == 'read' ? 'bg-info' : 'bg-warning'); ?>">
-                                    <?php echo $msg['status_text']; ?>
+                                    <?php
+                                        if ($msg['admin_reply']) {
+                                            echo "ตอบกลับแล้ว";
+                                        } elseif ($msg['status'] == 'read') {
+                                            echo "อ่านแล้ว";
+                                        } else {
+                                            echo "ยังไม่ได้อ่าน";
+                                        }
+                                    ?>
                                 </span>
                             </div>
                             <div class="text-muted mt-2">
@@ -178,8 +180,14 @@ if ($messages === false) {
                     </div>
                 <?php endwhile; ?>
             <?php else: ?>
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>ไม่มีข้อความใหม่
+                <div class="d-flex justify-content-center align-items-center" style="height:60vh;">
+                    <div class="card shadow-sm p-4" style="min-width:350px; border-radius:16px;">
+                        <div class="text-center">
+                            <i class="fas fa-inbox fa-4x text-secondary mb-3"></i>
+                            <h5 class="mb-2 text-muted">ไม่มีข้อความใหม่</h5>
+                            <p class="mb-0 text-secondary">เมื่อมีผู้ใช้ส่งข้อความถึงแอดมิน ข้อความจะแสดงที่นี่</p>
+                        </div>
+                    </div>
                 </div>
             <?php endif; ?>
         </main>
@@ -189,4 +197,8 @@ if ($messages === false) {
 <!-- Bootstrap JS -->
 <script src="../../bootstrap523/js/bootstrap.bundle.min.js"></script>
 </body>
-</html> 
+</html>
+<?php
+// ปิด connection
+mysqli_close($objCon);
+?>

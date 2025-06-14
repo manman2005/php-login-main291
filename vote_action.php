@@ -1,16 +1,7 @@
 <?php
 session_start();
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "php_login";
-
-$db = new mysqli($servername, $username, $password, $dbname);
-
-if ($db->connect_error) {
-    die("Connection failed: " . $db->connect_error);
-}
+require_once("includes/db_connection.php");
+date_default_timezone_set('Asia/Bangkok');
 
 if (!isset($_SESSION['user_login'])) {
     header("Location: login.php");
@@ -18,45 +9,72 @@ if (!isset($_SESSION['user_login'])) {
 }
 
 $user = $_SESSION['user_login'];
+$db = connectDB();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $candidate_id = intval($_POST['candidate_id']);
-    $user_id = intval($user['id']); // ใช้ id จาก array user
+    $vote_id = intval($_POST['vote_id']);
+    $user_id = intval($user['id']);
 
-    // ดึง vote_id ที่กำลังใช้งานอยู่
-    $vote_query = "SELECT vote_id FROM voting WHERE status = 'active' LIMIT 1";
-    $vote_result = $db->query($vote_query);
-    
-    if ($vote_result && $vote_result->num_rows > 0) {
-        $vote_row = $vote_result->fetch_assoc();
-        $vote_id = $vote_row['vote_id'];
+    // ดึงข้อมูลเลือกตั้ง
+    $voting_stmt = $db->prepare("SELECT * FROM voting WHERE vote_id = ? LIMIT 1");
+    $voting_stmt->bind_param("i", $vote_id);
+    $voting_stmt->execute();
+    $voting_result = $voting_stmt->get_result();
+    $voting = $voting_result->fetch_assoc();
+    $voting_stmt->close();
 
-        // ตรวจสอบว่าผู้ใช้ได้โหวตไปแล้วหรือยัง
-        $check_stmt = $db->prepare("SELECT * FROM votes WHERE user_id = ? AND vote_id = ?");
-        $check_stmt->bind_param("ii", $user_id, $vote_id);
-        $check_stmt->execute();
-        $result = $check_stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            // ถ้าผู้ใช้โหวตแล้วให้แสดงข้อความว่าโหวตแล้ว
-            echo "<script>alert('คุณได้โหวตไปแล้ว!'); window.location.href='index.php';</script>";
-        } else {
-            // ถ้าผู้ใช้ยังไม่ได้โหวตให้บันทึกการโหวตลงในฐานข้อมูล
-            $insert_stmt = $db->prepare("INSERT INTO votes (user_id, candidate_id, vote_id) VALUES (?, ?, ?)");
-            $insert_stmt->bind_param("iii", $user_id, $candidate_id, $vote_id);
-            
-            if ($insert_stmt->execute()) {
-                // แสดงข้อความว่าโหวตสำเร็จ
-                echo "<script>alert('โหวตสำเร็จ'); window.location.href='index.php';</script>";
-            } else {
-                echo "Error: " . $insert_stmt->error;
-            }
-            $insert_stmt->close();
-        }
-        $check_stmt->close();
-    } else {
-        echo "<script>alert('ไม่พบการเลือกตั้งที่กำลังดำเนินการอยู่'); window.location.href='index.php';</script>";
+    if (!$voting) {
+        echo "<script>alert('ไม่พบข้อมูลเลือกตั้ง'); window.location.href='index.php';</script>";
+        exit;
     }
+
+    // ประกอบ datetime
+    $start_datetime = $voting['date'] . ' ' . $voting['start_time'];
+    $end_datetime = $voting['date'] . ' ' . $voting['end_time'];
+    $now = date('Y-m-d H:i:s');
+
+    if ($now < $start_datetime) {
+        echo "<script>alert('ยังไม่ถึงเวลาเลือกตั้ง'); window.location.href='index.php';</script>";
+        exit;
+    }
+    if ($now > $end_datetime) {
+        echo "<script>alert('หมดเวลาเลือกตั้งแล้ว'); window.location.href='index.php';</script>";
+        exit;
+    }
+
+    // ตรวจสอบว่าผู้สมัครอยู่ในการเลือกตั้งนี้จริงหรือไม่
+    $check_candidate = $db->prepare("SELECT * FROM candidates WHERE candidate_id = ? AND vote_id = ?");
+    $check_candidate->bind_param("ii", $candidate_id, $vote_id);
+    $check_candidate->execute();
+    $candidate_result = $check_candidate->get_result();
+
+    if ($candidate_result->num_rows == 0) {
+        echo "<script>alert('ข้อมูลผู้สมัครไม่ถูกต้อง'); window.location.href='index.php';</script>";
+        exit;
+    }
+
+    // ตรวจสอบว่าผู้ใช้ได้โหวตไปแล้วหรือยัง
+    $check_stmt = $db->prepare("SELECT * FROM votes WHERE user_id = ? AND vote_id = ?");
+    $check_stmt->bind_param("ii", $user_id, $vote_id);
+    $check_stmt->execute();
+    $result = $check_stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        echo "<script>alert('คุณได้โหวตไปแล้ว!'); window.location.href='index.php';</script>";
+    } else {
+        $insert_stmt = $db->prepare("INSERT INTO votes (user_id, candidate_id, vote_id) VALUES (?, ?, ?)");
+        $insert_stmt->bind_param("iii", $user_id, $candidate_id, $vote_id);
+
+        if ($insert_stmt->execute()) {
+            echo "<script>alert('โหวตสำเร็จ'); window.location.href='index.php';</script>";
+        } else {
+            echo "Error: " . $insert_stmt->error;
+        }
+        $insert_stmt->close();
+    }
+    $check_stmt->close();
+    $check_candidate->close();
 }
 
 $db->close();

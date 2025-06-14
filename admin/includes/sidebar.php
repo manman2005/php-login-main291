@@ -3,76 +3,66 @@
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 
-<div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+<div class="col-md-3 col-lg-2 d-md-block sidebar collapse bg-dark text-white">
     <div class="position-sticky pt-3">
         <div class="text-center mb-4">
-            <h5 class="text-white">Admin Panel</h5>
-            <small class="text-muted">ระบบจัดการเลือกตั้ง</small>
+            <h4 class="fw-bold">Admin Panel</h4>
+            <div style="font-size: 0.95rem; color: #b0b0b0;">ระบบจัดการเลือกตั้ง</div>
         </div>
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link <?php echo $current_page == 'index.php' ? 'active' : ''; ?>" 
-                   href="/php-login-main291/admin/pages/index.php">
-                    <i class="fas fa-home me-2"></i>แดชบอร์ด
+                <a class="nav-link<?php if($current_page == 'index.php') echo ' active'; ?>" href="index.php">
+                    <i class="fas fa-home"></i> แดชบอร์ด
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo $current_page == 'elections.php' ? 'active' : ''; ?>" 
-                   href="/php-login-main291/admin/pages/elections.php">
-                    <i class="fas fa-vote-yea me-2"></i>จัดการการเลือกตั้ง
+                <a class="nav-link<?php if($current_page == 'elections.php') echo ' active'; ?>" href="elections.php">
+                    <i class="fas fa-ballot-check"></i> จัดการการเลือกตั้ง
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo $current_page == 'candidates.php' ? 'active' : ''; ?>" 
-                   href="/php-login-main291/admin/pages/candidates.php">
-                    <i class="fas fa-users me-2"></i>จัดการผู้สมัคร
+                <a class="nav-link<?php if($current_page == 'candidates.php') echo ' active'; ?>" href="candidates.php">
+                    <i class="fas fa-users"></i> จัดการผู้สมัคร
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo $current_page == 'users.php' ? 'active' : ''; ?>" 
-                   href="/php-login-main291/admin/pages/users.php">
-                    <i class="fas fa-user me-2"></i>จัดการผู้ใช้
+                <a class="nav-link<?php if($current_page == 'users.php') echo ' active'; ?>" href="users.php">
+                    <i class="fas fa-user"></i> จัดการผู้ใช้
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo $current_page == 'reports.php' ? 'active' : ''; ?>" 
-                   href="/php-login-main291/admin/pages/reports.php">
-                    <i class="fas fa-chart-bar me-2"></i>รายงาน
+                <a class="nav-link<?php if($current_page == 'reports.php') echo ' active'; ?>" href="reports.php">
+                    <i class="fas fa-chart-bar"></i> รายงาน
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo $current_page == 'announcements.php' ? 'active' : ''; ?>" 
-                   href="/php-login-main291/admin/pages/announcements.php">
-                    <i class="fas fa-bullhorn me-2"></i>ประกาศ
+                <a class="nav-link<?php if($current_page == 'announcements.php') echo ' active'; ?>" href="announcements.php">
+                    <i class="fas fa-bullhorn"></i> ประกาศ
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo $current_page == 'messages.php' ? 'active' : ''; ?>" 
-                   href="/php-login-main291/admin/pages/messages.php">
-                    <i class="fas fa-envelope me-2"></i>ข้อความ
+                <a class="nav-link<?php if($current_page == 'messages.php') echo ' active'; ?>" href="messages.php">
+                    <i class="fas fa-envelope"></i> ข้อความ
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo $current_page == 'files.php' ? 'active' : ''; ?>" 
-                   href="/php-login-main291/admin/pages/files.php">
-                    <i class="fas fa-folder me-2"></i>จัดการไฟล์
+                <a class="nav-link<?php if($current_page == 'files.php') echo ' active'; ?>" href="files.php">
+                    <i class="fas fa-folder"></i> จัดการไฟล์
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo $current_page == 'backup.php' ? 'active' : ''; ?>" 
-                   href="/php-login-main291/admin/pages/backup.php">
-                    <i class="fas fa-database me-2"></i>สำรองข้อมูล
+                <a class="nav-link<?php if($current_page == 'backup.php') echo ' active'; ?>" href="backup.php">
+                    <i class="fas fa-database"></i> สำรองข้อมูล
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?php echo $current_page == 'settings.php' ? 'active' : ''; ?>" 
-                   href="/php-login-main291/admin/pages/settings.php">
-                    <i class="fas fa-cog me-2"></i>ตั้งค่า
+                <a class="nav-link<?php if($current_page == 'settings.php') echo ' active'; ?>" href="settings.php">
+                    <i class="fas fa-cog"></i> ตั้งค่า
                 </a>
             </li>
-            <li class="nav-item mt-3">
-                <a class="nav-link text-danger" href="/php-login-main291/logout.php">
-                    <i class="fas fa-sign-out-alt me-2"></i>ออกจากระบบ
+            <li class="nav-item mt-2">
+                <a class="nav-link" href="../../logout.php">
+                    <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
                 </a>
             </li>
         </ul>
@@ -81,6 +71,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
 <style>
 .sidebar {
+    background: #23272b !important;
+    color: #fff !important;
     min-height: 100vh;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
@@ -108,4 +100,4 @@ $current_page = basename($_SERVER['PHP_SELF']);
     width: 20px;
     text-align: center;
 }
-</style> 
+</style>
