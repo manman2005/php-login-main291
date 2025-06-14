@@ -1,6 +1,7 @@
 <?php
 session_start();
 include_once("../includes/auth.php");
+include_once("../includes/db_connection.php"); // เพิ่มบรรทัดนี้
 
 // ตรวจสอบสิทธิ์ผู้ดูแลระบบ
 if (!isset($_SESSION['user_login']) || $_SESSION['user_login']['role_id'] != 1) {
@@ -54,7 +55,12 @@ try {
     $tables = ['voting_settings', 'candidates', 'votes', 'voting'];
     
     foreach ($tables as $table) {
-        $sql = "DELETE FROM $table WHERE " . ($table == 'votes' ? 'candidate_id IN (SELECT candidate_id FROM candidates WHERE vote_id = ?)' : 'vote_id = ?');
+        if ($table == 'votes') {
+            // ลบ votes ที่ vote_id ตรงกัน (ง่ายและเร็วกว่า)
+            $sql = "DELETE FROM votes WHERE vote_id = ?";
+        } else {
+            $sql = "DELETE FROM $table WHERE vote_id = ?";
+        }
         $stmt = mysqli_prepare($objCon, $sql);
         mysqli_stmt_bind_param($stmt, "s", $vote_id);
         
@@ -75,4 +81,4 @@ try {
 
 header("Location: elections.php");
 exit;
-?> 
+?>

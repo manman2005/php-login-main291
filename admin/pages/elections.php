@@ -1,12 +1,18 @@
 <?php
 session_start();
 require_once("../includes/auth.php");
+include_once("../../includes/db_connection.php"); // แก้ path ตรงนี้
 
 // ตรวจสอบว่าเป็น admin
 if (!isset($_SESSION['user_login']) || $_SESSION['user_login']['role_id'] != 1) {
     $_SESSION['error'] = 'กรุณาเข้าสู่ระบบด้วยบัญชีผู้ดูแลระบบ';
     header("Location: ../../login.php");
     exit;
+}
+
+// สร้าง CSRF token ถ้ายังไม่มี
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
 // เชื่อมต่อฐานข้อมูล
@@ -276,11 +282,13 @@ $elections = mysqli_query($objCon, $sql);
                                                class="btn btn-sm btn-outline-info me-1">
                                                 <i class="fas fa-chart-bar"></i>
                                             </a>
-                                            <button type="button" 
-                                                    class="btn btn-sm btn-outline-danger"
-                                                    onclick="confirmDelete(<?php echo $row['vote_id']; ?>)">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                            <form method="post" action="election_delete.php" style="display:inline;" onsubmit="return confirm('คุณแน่ใจหรือไม่ที่จะลบการเลือกตั้งนี้?');">
+                                                <input type="hidden" name="vote_id" value="<?php echo $row['vote_id']; ?>">
+                                                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>
@@ -295,14 +303,8 @@ $elections = mysqli_query($objCon, $sql);
 
 <!-- Bootstrap Bundle with Popper -->
 <script src="../../bootstrap523/js/bootstrap.bundle.min.js"></script>
-
-<script>
-function confirmDelete(id) {
-    if (confirm('คุณแน่ใจหรือไม่ที่จะลบการเลือกตั้งนี้?')) {
-        window.location.href = `election_delete.php?id=${id}`;
-    }
-}
-</script>
-
 </body>
-</html> 
+</html>
+<?php
+mysqli_close($objCon);
+?>
