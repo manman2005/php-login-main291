@@ -51,8 +51,8 @@ if ($active_election) {
     }
     $check_stmt->close();
 
-    // ดึงข้อมูลผู้สมัคร + join users เพื่อ fullname
-    $sql = "SELECT c.*, u.fullname 
+    // ดึงข้อมูลผู้สมัคร + join users เพื่อ fullname และ email
+    $sql = "SELECT c.*, u.fullname, u.email 
             FROM candidates c 
             LEFT JOIN users u ON c.user_id = u.id 
             WHERE c.vote_id = ? 
@@ -111,12 +111,21 @@ if ($active_election) {
                     <a class="nav-link active" href="vote.php">
                         <i class="fas fa-check-square me-1"></i>ลงคะแนน
                     </a>
+                    
                 </li>
             </ul>
-            <div class="d-flex align-items-center">
-                <span class="text-white me-3">
-                    <i class="fas fa-user me-1"></i><?php echo htmlspecialchars($user['fullname']); ?>
-                </span>
+            <div class="d-flex align-items-center text-white">
+                 <i class="fas fa-user me-2 text-white"></i>
+                        <?php 
+                            if (!empty($user['fullname'])) {
+                                echo htmlspecialchars($user['fullname']);
+                            } else if (!empty($user['username'])) {
+                                echo htmlspecialchars($user['username']);
+                            } else {
+                                echo htmlspecialchars($user['email']);
+                            }
+                        ?>
+                    </div>
                 <a href="logout_action.php" class="btn btn-light btn-sm">
                     <i class="fas fa-sign-out-alt me-1"></i>ออกจากระบบ
                 </a>
@@ -170,15 +179,28 @@ if ($active_election) {
                         <div class="card h-100">
                             <div class="card-body text-center">
                                 <?php if (!empty($row['image_path'])): ?>
-                                    <img src="<?php echo htmlspecialchars($row['image_path']); ?>" class="candidate-img" alt="<?php echo (array_key_exists('fullname', $row) && $row['fullname'] !== null && $row['fullname'] !== '') ? htmlspecialchars($row['fullname']) : '-'; ?>">
+                                    <img src="<?php echo htmlspecialchars($row['image_path']); ?>" class="candidate-img" alt="<?php
+                                        if (!empty($row['fullname'])) {
+                                            echo htmlspecialchars($row['fullname']);
+                                        } elseif (!empty($row['email'])) {
+                                            echo htmlspecialchars($row['email']);
+                                        } else {
+                                            echo '-';
+                                        }
+                                    ?>">
                                 <?php else: ?>
                                     <img src="vote_img/default.jpg" class="candidate-img" alt="Default Image">
                                 <?php endif; ?>
                                 <h5 class="card-title mt-3">
                                     <i class="fas fa-user me-2"></i>
                                     <?php
-                                    echo (array_key_exists('fullname', $row) && $row['fullname'] !== null && $row['fullname'] !== '') 
-                                        ? htmlspecialchars($row['fullname']) : '-';
+                                    if (!empty($row['fullname'])) {
+                                        echo htmlspecialchars($row['fullname']);
+                                    } elseif (!empty($row['email'])) {
+                                        echo htmlspecialchars($row['email']);
+                                    } else {
+                                        echo '-';
+                                    }
                                     ?>
                                 </h5>
                                 <p class="card-text text-muted"><i class="fas fa-info-circle me-2"></i><?php echo htmlspecialchars($row['description']); ?></p>
