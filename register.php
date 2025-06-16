@@ -12,6 +12,7 @@ if (!isset($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
+// รวมไฟล์เชื่อมต่อฐานข้อมูล (สำหรับใช้ในฟอร์มนี้ถ้าต้องการ)
 include_once("includes/db_connection.php");
 ?>
 <!DOCTYPE html>

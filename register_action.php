@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once("includes/db_connection.php"); // เพิ่มบรรทัดนี้เพื่อให้ใช้ connectDB() ได้
 require_once("includes/function.php");
 
 // ตรวจสอบว่าส่งข้อมูลผ่าน POST มาหรือไม่
