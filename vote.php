@@ -1,7 +1,6 @@
 <?php
 // Set timezone to Thailand
 date_default_timezone_set('Asia/Bangkok');
-// Set secure session parameters
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_only_cookies', 1);
 ini_set('session.cookie_secure', 1);
@@ -171,13 +170,16 @@ if ($active_election) {
                         <div class="card h-100">
                             <div class="card-body text-center">
                                 <?php if (!empty($row['image_path'])): ?>
-                                    <img src="<?php echo htmlspecialchars($row['image_path']); ?>" class="candidate-img" alt="<?php echo (isset($row['fullname']) && $row['fullname'] !== null && $row['fullname'] !== '') ? htmlspecialchars($row['fullname']) : '-'; ?>">
+                                    <img src="<?php echo htmlspecialchars($row['image_path']); ?>" class="candidate-img" alt="<?php echo (array_key_exists('fullname', $row) && $row['fullname'] !== null && $row['fullname'] !== '') ? htmlspecialchars($row['fullname']) : '-'; ?>">
                                 <?php else: ?>
                                     <img src="vote_img/default.jpg" class="candidate-img" alt="Default Image">
                                 <?php endif; ?>
                                 <h5 class="card-title mt-3">
                                     <i class="fas fa-user me-2"></i>
-                                    <?php echo (isset($row['fullname']) && $row['fullname'] !== null && $row['fullname'] !== '') ? htmlspecialchars($row['fullname']) : '-'; ?>
+                                    <?php
+                                    echo (array_key_exists('fullname', $row) && $row['fullname'] !== null && $row['fullname'] !== '') 
+                                        ? htmlspecialchars($row['fullname']) : '-';
+                                    ?>
                                 </h5>
                                 <p class="card-text text-muted"><i class="fas fa-info-circle me-2"></i><?php echo htmlspecialchars($row['description']); ?></p>
                                 <input type="radio" class="vote-radio" name="candidate_id" id="candidate<?php echo $row['candidate_id']; ?>" value="<?php echo $row['candidate_id']; ?>" <?php if (!$can_vote) echo 'disabled'; ?>>
