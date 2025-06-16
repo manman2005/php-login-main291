@@ -1,7 +1,7 @@
 <?php
 session_start();
 include_once("../includes/auth.php");
-include_once("../includes/db_connection.php"); // เพิ่มบรรทัดนี้
+include_once("../../includes/db_connection.php"); // แก้ path ตรงนี้
 
 // ตรวจสอบสิทธิ์ผู้ดูแลระบบ
 if (!isset($_SESSION['user_login']) || $_SESSION['user_login']['role_id'] != 1) {
@@ -56,7 +56,6 @@ try {
     
     foreach ($tables as $table) {
         if ($table == 'votes') {
-            // ลบ votes ที่ vote_id ตรงกัน (ง่ายและเร็วกว่า)
             $sql = "DELETE FROM votes WHERE vote_id = ?";
         } else {
             $sql = "DELETE FROM $table WHERE vote_id = ?";

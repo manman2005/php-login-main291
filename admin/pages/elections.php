@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once("../includes/auth.php");
-include_once("../../includes/db_connection.php"); // แก้ path ตรงนี้
+include_once("../../includes/db_connection.php");
 
 // ตรวจสอบว่าเป็น admin
 if (!isset($_SESSION['user_login']) || $_SESSION['user_login']['role_id'] != 1) {
@@ -256,21 +256,14 @@ $elections = mysqli_query($objCon, $sql);
                                         </td>
                                         <td>
                                             <?php
-                                            $now = new DateTime();
-                                            $start = new DateTime($row['start_time']);
-                                            $end = new DateTime($row['end_time']);
-                                            
-                                            if ($row['status'] == 'active') {
-                                                if ($now < $start) {
-                                                    echo '<span class="badge bg-warning">รอเริ่มการเลือกตั้ง</span>';
-                                                } elseif ($now >= $start && $now <= $end) {
-                                                    echo '<span class="badge bg-success">กำลังดำเนินการ</span>';
-                                                } else {
-                                                    echo '<span class="badge bg-secondary">สิ้นสุดแล้ว</span>';
-                                                }
-                                            } else {
-                                                echo '<span class="badge bg-danger">ยกเลิก</span>';
-                                            }
+                                            // แสดง badge สถานะ
+                                            $status_badge = [
+                                                'draft' => '<span class="badge bg-secondary">ร่าง</span>',
+                                                'active' => '<span class="badge bg-success">เปิดโหวต</span>',
+                                                'completed' => '<span class="badge bg-primary">เสร็จสิ้น</span>',
+                                                'cancelled' => '<span class="badge bg-danger">ยกเลิก</span>',
+                                            ];
+                                            echo isset($status_badge[$row['status']]) ? $status_badge[$row['status']] : '<span class="badge bg-dark">ไม่ทราบสถานะ</span>';
                                             ?>
                                         </td>
                                         <td>
@@ -282,6 +275,18 @@ $elections = mysqli_query($objCon, $sql);
                                                class="btn btn-sm btn-outline-info me-1">
                                                 <i class="fas fa-chart-bar"></i>
                                             </a>
+                                            <!-- ปุ่มเปลี่ยนสถานะแบบ dropdown -->
+                                            <form method="post" action="election_status.php" style="display:inline;">
+                                                <input type="hidden" name="vote_id" value="<?php echo $row['vote_id']; ?>">
+                                                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                                                <select name="set_status" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
+                                                    <option value="draft" <?php if($row['status']=='draft') echo 'selected'; ?>>ร่าง</option>
+                                                    <option value="active" <?php if($row['status']=='active') echo 'selected'; ?>>เปิดโหวต</option>
+                                                    <option value="completed" <?php if($row['status']=='completed') echo 'selected'; ?>>เสร็จสิ้น</option>
+                                                    <option value="cancelled" <?php if($row['status']=='cancelled') echo 'selected'; ?>>ยกเลิก</option>
+                                                </select>
+                                            </form>
+                                            <!-- ปุ่มลบเดิม -->
                                             <form method="post" action="election_delete.php" style="display:inline;" onsubmit="return confirm('คุณแน่ใจหรือไม่ที่จะลบการเลือกตั้งนี้?');">
                                                 <input type="hidden" name="vote_id" value="<?php echo $row['vote_id']; ?>">
                                                 <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
@@ -297,6 +302,7 @@ $elections = mysqli_query($objCon, $sql);
                     </div>
                 </div>
             </div>
+
         </main>
     </div>
 </div>

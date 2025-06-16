@@ -35,10 +35,11 @@ if (!$election) {
     exit;
 }
 
-// ดึงข้อมูลผู้สมัครและคะแนน
-$sql = "SELECT c.*, 
+// ดึงข้อมูลผู้สมัครและคะแนน พร้อม fullname
+$sql = "SELECT c.*, u.fullname, 
         (SELECT COUNT(*) FROM votes v WHERE v.candidate_id = c.candidate_id) as vote_count
         FROM candidates c
+        LEFT JOIN users u ON c.user_id = u.id
         WHERE c.vote_id = $election_id
         ORDER BY vote_count DESC, c.candidate_number ASC";
 $candidates = mysqli_query($objCon, $sql);
@@ -175,7 +176,7 @@ $candidates = mysqli_query($objCon, $sql);
                                     หมายเลข <?php echo $candidate['candidate_number']; ?>
                                 </h5>
                                 <h6 class="text-center mb-3">
-                                    <?php echo htmlspecialchars($candidate['fullname']); ?>
+                                    <?php echo isset($candidate['fullname']) ? htmlspecialchars($candidate['fullname']) : '-'; ?>
                                 </h6>
                                 <div class="text-center">
                                     <h3 class="text-primary mb-2">
@@ -210,4 +211,4 @@ $candidates = mysqli_query($objCon, $sql);
 <script src="../../bootstrap523/js/bootstrap.bundle.min.js"></script>
 
 </body>
-</html> 
+</html>
