@@ -1,7 +1,7 @@
 <?php
 session_start();
 include_once("../includes/auth.php");
-include_once("../../includes/db_connection.php"); // แก้ path ตรงนี้
+include_once("../../includes/db_connection.php");
 
 // ตรวจสอบสิทธิ์ผู้ดูแลระบบ
 if (!isset($_SESSION['user_login']) || $_SESSION['user_login']['role_id'] != 1) {
@@ -27,7 +27,7 @@ if (!isset($_POST['vote_id'])) {
 $objCon = connectDB();
 $vote_id = mysqli_real_escape_string($objCon, $_POST['vote_id']);
 
-// ตรวจสอบว่าการเลือกตั้งเริ่มแล้วหรือไม่
+// ตรวจสอบว่าการเลือกตั้งมีอยู่จริงหรือไม่
 $sql = "SELECT * FROM voting WHERE vote_id = '$vote_id'";
 $result = mysqli_query($objCon, $sql);
 
@@ -37,35 +37,23 @@ if (!$result || mysqli_num_rows($result) == 0) {
     exit;
 }
 
-$election = mysqli_fetch_assoc($result);
-$current_datetime = new DateTime();
-$election_start = new DateTime($election['date'] . ' ' . $election['start_time']);
-
-if ($current_datetime >= $election_start) {
-    $_SESSION['error'] = 'ไม่สามารถลบการเลือกตั้งที่เริ่มแล้วได้';
-    header("Location: elections.php");
-    exit;
-}
-
 // เริ่ม transaction
 mysqli_begin_transaction($objCon);
 
 try {
-    // ลบข้อมูลที่เกี่ยวข้อง
-    $tables = ['voting_settings', 'candidates', 'votes', 'voting'];
-    
+    // ลบข้อมูลที่เกี่ยวข้อง (ลำดับ: votes -> candidates -> voting)
+    $tables = ['votes', 'candidates', 'voting'];
     foreach ($tables as $table) {
-        if ($table == 'votes') {
-            $sql = "DELETE FROM votes WHERE vote_id = ?";
-        } else {
-            $sql = "DELETE FROM $table WHERE vote_id = ?";
-        }
+        $sql = "DELETE FROM $table WHERE vote_id = ?";
         $stmt = mysqli_prepare($objCon, $sql);
-        mysqli_stmt_bind_param($stmt, "s", $vote_id);
-        
-        if (!mysqli_stmt_execute($stmt)) {
-            throw new Exception("ไม่สามารถลบข้อมูลจากตาราง $table ได้");
+        if (!$stmt) {
+            throw new Exception("ไม่สามารถเตรียม statement สำหรับตาราง $table ได้: " . mysqli_error($objCon));
         }
+        mysqli_stmt_bind_param($stmt, "s", $vote_id);
+        if (!mysqli_stmt_execute($stmt)) {
+            throw new Exception("ไม่สามารถลบข้อมูลจากตาราง $table ได้: " . mysqli_stmt_error($stmt));
+        }
+        mysqli_stmt_close($stmt);
     }
 
     // Commit transaction
