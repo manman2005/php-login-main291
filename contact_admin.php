@@ -1,10 +1,8 @@
 <?php
-require_once("includes/config.php"); // ini_set อยู่ในนี้
-require_once("includes/db_connection.php"); // ฟังก์ชัน connectDB()
+require_once("includes/config.php");
+require_once("includes/db_connection.php");
 session_start();
-// require_once("includes/auth.php"); // ถ้ามีไฟล์นี้ค่อยเปิด
 
-// ตรวจสอบการล็อกอิน
 if (!isset($_SESSION['user_login'])) {
     $_SESSION['error'] = 'กรุณาเข้าสู่ระบบก่อนใช้งาน';
     header("Location: login.php");
@@ -48,8 +46,8 @@ $stmt = $objCon->prepare($sql);
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $messages = $stmt->get_result();
+$user = $_SESSION['user_login'];
 ?>
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -65,9 +63,62 @@ $messages = $stmt->get_result();
     <style>
         body { font-family: 'Kanit', sans-serif; background: #f5f5f5; }
         .card { border-radius: 15px; }
+        .navbar { background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .navbar-brand { color: white !important; font-weight: 600; font-size: 1.5rem; }
+        .navbar-brand img { width: 40px; height: 40px; object-fit: cover; border-radius: 50%; margin-right: 10px; border: 2px solid white;}
+        .nav-link { color: rgba(255,255,255,0.9) !important; font-weight: 500; transition: all 0.3s ease; }
+        .nav-link:hover, .nav-link.active { color: white !important; }
+        .user-info { color: white; padding: 0.5rem 1rem; border-radius: 50px; background: rgba(255,255,255,0.1);}
     </style>
 </head>
 <body>
+<!-- Navbar (เหมือนหน้า index.php) -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="index.php">
+            <img src="vote_img/man05.jpg" alt="Logo">
+            ระบบเลือกตั้งออนไลน์
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link<?php if(basename($_SERVER['PHP_SELF'])=='index.php') echo ' active'; ?>" href="index.php">
+                        <i class="fas fa-home me-1"></i>หน้าแรก
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link<?php if(basename($_SERVER['PHP_SELF'])=='vote.php') echo ' active'; ?>" href="vote.php">
+                        <i class="fas fa-check-square me-1"></i>ลงคะแนน
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link<?php if(basename($_SERVER['PHP_SELF'])=='contact_admin.php') echo ' active'; ?>" href="contact_admin.php">
+                        <i class="fas fa-envelope me-1"></i>ติดต่อแอดมิน
+                    </a>
+                </li>
+            </ul>
+            <div class="user-info me-3">
+                <i class="fas fa-user me-2"></i>
+                <?php 
+                    if (!empty($user['fullname'])) {
+                        echo htmlspecialchars($user['fullname']);
+                    } else if (!empty($user['username'])) {
+                        echo htmlspecialchars($user['username']);
+                    } else {
+                        echo htmlspecialchars($user['email']);
+                    }
+                ?>
+            </div>
+            <a href="logout_action.php" class="btn btn-light">
+                <i class="fas fa-sign-out-alt me-1"></i>ออกจากระบบ
+            </a>
+        </div>
+    </div>
+</nav>
+
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-7">

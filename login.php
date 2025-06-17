@@ -245,7 +245,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             novalidate
         >
             <img
-                src="https://via.placeholder.com/80"
+                src="vote_img/man05.jpg"
                 alt="Logo"
                 class="brand-logo"
             />

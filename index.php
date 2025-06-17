@@ -292,7 +292,7 @@ if (mysqli_num_rows($table_exists) > 0) {
                                         } elseif ($row['status'] === 'upcoming') {
                                             echo '<span class="status-badge status-upcoming">กำลังจะมาถึง</span>';
                                         } else {
-                                            echo '<span class="status-badge bg-secondary">ไม่ทราบสถานะ</span>';
+                                            echo '<span class="status-badge bg-secondary">สิ้นสุดแล้ว</span>';
                                         }
                                     } else {
                                         // fallback เดิม (ตามวันเวลา)

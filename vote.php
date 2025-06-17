@@ -79,6 +79,10 @@ if ($active_election) {
     <style>
         body { font-family: 'Kanit', sans-serif; background-color: #f8f9fa; }
         .navbar { background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .navbar-brand { color: white !important; font-weight: 600; font-size: 1.5rem; }
+        .nav-link { color: rgba(255,255,255,0.9) !important; font-weight: 500; }
+        .nav-link:hover, .nav-link.active { color: white !important; }
+        .user-info { color: white; padding: 0.5rem 1rem; border-radius: 50px; background: rgba(255,255,255,0.1);}
         .card { border: none; border-radius: 15px; transition: transform 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.1);}
         .card:hover { transform: translateY(-5px);}
         .vote-radio { display: none;}
@@ -92,10 +96,11 @@ if ($active_election) {
 <body>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark">
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container">
-        <a class="navbar-brand" href="#">
-            <i class="fas fa-vote-yea me-2"></i>ระบบเลือกตั้งออนไลน์
+        <a class="navbar-brand" href="index.php">
+            <img src="vote_img/man05.jpg" class="rounded-circle" alt="Logo" style="width:40px; height:40px; object-fit:cover; border-radius:50%; margin-right:10px;">
+            ระบบเลือกตั้งออนไลน์
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -111,25 +116,28 @@ if ($active_election) {
                     <a class="nav-link active" href="vote.php">
                         <i class="fas fa-check-square me-1"></i>ลงคะแนน
                     </a>
-                    
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="contact_admin.php">
+                        <i class="fas fa-envelope me-1"></i>ติดต่อแอดมิน
+                    </a>
                 </li>
             </ul>
-            <div class="d-flex align-items-center text-white">
-                 <i class="fas fa-user me-2 text-white"></i>
-                        <?php 
-                            if (!empty($user['fullname'])) {
-                                echo htmlspecialchars($user['fullname']);
-                            } else if (!empty($user['username'])) {
-                                echo htmlspecialchars($user['username']);
-                            } else {
-                                echo htmlspecialchars($user['email']);
-                            }
-                        ?>
-                    </div>
-                <a href="logout_action.php" class="btn btn-light btn-sm">
-                    <i class="fas fa-sign-out-alt me-1"></i>ออกจากระบบ
-                </a>
+            <div class="user-info me-3">
+                <i class="fas fa-user me-2"></i>
+                <?php 
+                    if (!empty($user['fullname'])) {
+                        echo htmlspecialchars($user['fullname']);
+                    } else if (!empty($user['username'])) {
+                        echo htmlspecialchars($user['username']);
+                    } else {
+                        echo htmlspecialchars($user['email']);
+                    }
+                ?>
             </div>
+            <a href="logout_action.php" class="btn btn-light">
+                <i class="fas fa-sign-out-alt me-1"></i>ออกจากระบบ
+            </a>
         </div>
     </div>
 </nav>
