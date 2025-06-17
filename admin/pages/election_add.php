@@ -76,51 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
-            <div class="position-sticky pt-3">
-                <div class="text-center mb-4">
-                    <h5>Admin Panel</h5>
-                    <small class="text-muted">ระบบจัดการเลือกตั้ง</small>
-                </div>
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="../index.php">
-                            <i class="fas fa-home me-2"></i>แดชบอร์ด
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="elections.php">
-                            <i class="fas fa-vote-yea me-2"></i>จัดการการเลือกตั้ง
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="candidates.php">
-                            <i class="fas fa-users me-2"></i>จัดการผู้สมัคร
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="users.php">
-                            <i class="fas fa-user-cog me-2"></i>จัดการผู้ใช้
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="reports.php">
-                            <i class="fas fa-chart-bar me-2"></i>รายงาน
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="settings.php">
-                            <i class="fas fa-cog me-2"></i>ตั้งค่า
-                        </a>
-                    </li>
-                    <li class="nav-item mt-3">
-                        <a class="nav-link text-danger" href="../../logout_action.php">
-                            <i class="fas fa-sign-out-alt me-2"></i>ออกจากระบบ
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+       <?php include_once("../includes/sidebar.php"); ?>
 
         <!-- Main content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
