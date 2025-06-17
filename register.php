@@ -32,7 +32,7 @@ include_once("includes/db_connection.php");
             background-color: #f8f9fa;
         }
         .register-form {
-            max-width: 600px;
+            max-width: 500px;
             margin: 2rem auto;
             padding: 2rem;
             background: white;
@@ -79,39 +79,27 @@ include_once("includes/db_connection.php");
         <form id="registerForm" action="register_action.php" method="POST" class="needs-validation" novalidate>
             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
             
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="firstname" class="form-label">ชื่อ <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="firstname" name="firstname" required
-                           pattern="^[ก-์A-Za-z\s]+$" minlength="2">
-                    <div class="invalid-feedback">
-                        กรุณากรอกชื่อให้ถูกต้อง (ภาษาไทยหรืออังกฤษเท่านั้น)
-                    </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">ชื่อผู้ใช้ <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="username" name="username" required minlength="3" maxlength="50" pattern="^[A-Za-z0-9_.-]+$">
+                <div class="invalid-feedback">
+                    กรุณากรอกชื่อผู้ใช้ (a-z, 0-9, _, . หรือ - เท่านั้น)
                 </div>
-                <div class="col-md-6">
-                    <label for="lastname" class="form-label">นามสกุล <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="lastname" name="lastname" required
-                           pattern="^[ก-์A-Za-z\s]+$" minlength="2">
-                    <div class="invalid-feedback">
-                        กรุณากรอกนามสกุลให้ถูกต้อง (ภาษาไทยหรืออังกฤษเท่านั้น)
-                    </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="fullname" class="form-label">ชื่อ-นามสกุล <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="fullname" name="fullname" required maxlength="100">
+                <div class="invalid-feedback">
+                    กรุณากรอกชื่อ-นามสกุล
                 </div>
             </div>
 
             <div class="mb-3">
                 <label for="email" class="form-label">อีเมล <span class="text-danger">*</span></label>
-                <input type="email" class="form-control" id="email" name="email" required>
+                <input type="email" class="form-control" id="email" name="email" required maxlength="100">
                 <div class="invalid-feedback">
                     กรุณากรอกอีเมลให้ถูกต้อง
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label for="student_id" class="form-label">รหัสนักศึกษา <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="student_id" name="student_id" required
-                       pattern="^\d{11}$">
-                <div class="invalid-feedback">
-                    กรุณากรอกรหัสนักศึกษา 11 หลัก
                 </div>
             </div>
 
@@ -119,7 +107,7 @@ include_once("includes/db_connection.php");
                 <label for="password" class="form-label">รหัสผ่าน <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <input type="password" class="form-control" id="password" name="password" required
-                           pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$">
+                           pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" maxlength="255">
                     <span class="input-group-text password-toggle" onclick="togglePassword('password')">
                         <i class="fas fa-eye"></i>
                     </span>
@@ -132,40 +120,13 @@ include_once("includes/db_connection.php");
             <div class="mb-3">
                 <label for="confirm_password" class="form-label">ยืนยันรหัสผ่าน <span class="text-danger">*</span></label>
                 <div class="input-group">
-                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required maxlength="255">
                     <span class="input-group-text password-toggle" onclick="togglePassword('confirm_password')">
                         <i class="fas fa-eye"></i>
                     </span>
                 </div>
                 <div class="invalid-feedback">
                     กรุณายืนยันรหัสผ่านให้ตรงกัน
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label for="faculty" class="form-label">คณะ <span class="text-danger">*</span></label>
-                <select class="form-select" id="faculty" name="faculty" required>
-                    <option value="">เลือกคณะ</option>
-                    <option value="วิศวกรรมศาสตร์">วิศวกรรมศาสตร์</option>
-                    <option value="วิทยาศาสตร์">วิทยาศาสตร์</option>
-                    <option value="ครุศาสตร์อุตสาหกรรม">ครุศาสตร์อุตสาหกรรม</option>
-                    <option value="เทคโนโลยีการเกษตร">เทคโนโลยีการเกษตร</option>
-                    <option value="เทคโนโลยีสารสนเทศ">เทคโนโลยีสารสนเทศ</option>
-                    <option value="การบริหารและการจัดการ">การบริหารและการจัดการ</option>
-                    <option value="ศิลปศาสตร์">ศิลปศาสตร์</option>
-                    <option value="สถาปัตยกรรมศาสตร์">สถาปัตยกรรมศาสตร์</option>
-                    <option value="การแพทย์">การแพทย์</option>
-                </select>
-                <div class="invalid-feedback">
-                    กรุณาเลือกคณะ
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label for="department" class="form-label">สาขาวิชา <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="department" name="department" required>
-                <div class="invalid-feedback">
-                    กรุณากรอกสาขาวิชา
                 </div>
             </div>
 
