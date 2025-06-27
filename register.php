@@ -1,5 +1,5 @@
 <?php
-session_start(); // เปิดใช้งาน session
+session_start();
 
 // ถ้าล็อกอินแล้วให้ไปหน้าหลัก
 if (isset($_SESSION['user_login'])) {
@@ -12,7 +12,6 @@ if (!isset($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-// รวมไฟล์เชื่อมต่อฐานข้อมูล (สำหรับใช้ในฟอร์มนี้ถ้าต้องการ)
 include_once("includes/db_connection.php");
 ?>
 <!DOCTYPE html>
@@ -26,35 +25,112 @@ include_once("includes/db_connection.php");
     <link href="bootstrap523/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Kanit', sans-serif;
-            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+            font-family: "Kanit", sans-serif;
         }
-        .register-form {
-            max-width: 500px;
-            margin: 2rem auto;
+        .form-signin {
+            background-color: rgba(255, 255, 255, 0.95);
             padding: 2rem;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 380px;
+            transition: transform 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
         }
-        .password-toggle {
+        .form-signin:hover {
+            transform: translateY(-5px);
+        }
+        .form-signin h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.6rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+        .input-group-text.password-toggle {
+            background: transparent;
+            border: none;
+            color: #666;
             cursor: pointer;
         }
-        .error-feedback {
-            color: #dc3545;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
+        .btn-primary {
+            background: linear-gradient(45deg, #4a90e2, #5fb7ff);
+            border: none;
+            padding: 0.8rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #357abd, #4a90e2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+        }
+        .btn-secondary {
+            font-weight: 500;
+        }
+        .alert {
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .brand-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #4a90e2;
+            background: #f8f9fa;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .form-control {
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+        }
+        .register-link {
+            margin-top: 1rem;
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .register-link:hover {
+            color: #4a90e2;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        @media (max-width: 576px) {
+            .form-signin {
+                padding: 1.5rem 0.5rem;
+            }
         }
     </style>
 </head>
 
 <body>
-
-<div class="container">
-    <div class="register-form">
-        <h2 class="text-center mb-4">ลงทะเบียนผู้ใช้งาน</h2>
+    <main class="form-signin">
+        <img src="vote_img/man05.jpg" alt="Logo" class="brand-logo" />
+        <h2 class="mb-4">ลงทะเบียนผู้ใช้งาน</h2>
         
         <?php if (isset($_SESSION['error'])): ?>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -105,9 +181,9 @@ include_once("includes/db_connection.php");
 
             <div class="mb-3">
                 <label for="password" class="form-label">รหัสผ่าน <span class="text-danger">*</span></label>
-                <div class="input-group">
+                <div class="input-group position-relative">
                     <input type="password" class="form-control" id="password" name="password" required
-                           pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" maxlength="255">
+                           pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$" maxlength="255" autocomplete="new-password">
                     <span class="input-group-text password-toggle" onclick="togglePassword('password')">
                         <i class="fas fa-eye"></i>
                     </span>
@@ -119,8 +195,8 @@ include_once("includes/db_connection.php");
 
             <div class="mb-3">
                 <label for="confirm_password" class="form-label">ยืนยันรหัสผ่าน <span class="text-danger">*</span></label>
-                <div class="input-group">
-                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required maxlength="255">
+                <div class="input-group position-relative">
+                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required maxlength="255" autocomplete="new-password">
                     <span class="input-group-text password-toggle" onclick="togglePassword('confirm_password')">
                         <i class="fas fa-eye"></i>
                     </span>
@@ -130,61 +206,61 @@ include_once("includes/db_connection.php");
                 </div>
             </div>
 
-            <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary">ลงทะเบียน</button>
-                <a href="login.php" class="btn btn-secondary">กลับไปหน้าเข้าสู่ระบบ</a>
-            </div>
+            <button type="submit" class="w-100 btn btn-primary mb-3">
+                <i class="fas fa-user-plus me-2"></i>ลงทะเบียน
+            </button>
+            <a href="login.php" class="register-link d-block">
+                <i class="fas fa-sign-in-alt me-2"></i>กลับไปหน้าเข้าสู่ระบบ
+            </a>
         </form>
-    </div>
-</div>
+    </main>
 
-<!-- Bootstrap Bundle with Popper -->
-<script src="bootstrap523/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="bootstrap523/js/bootstrap.bundle.min.js"></script>
 
-<script>
-// ตรวจสอบการกรอกข้อมูล
-(function () {
-    'use strict'
-    var forms = document.querySelectorAll('.needs-validation')
-    Array.prototype.slice.call(forms).forEach(function (form) {
-        form.addEventListener('submit', function (event) {
-            if (!form.checkValidity()) {
-                event.preventDefault()
-                event.stopPropagation()
-            }
+    <script>
+    // ตรวจสอบการกรอกข้อมูล
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
 
-            // ตรวจสอบรหัสผ่านตรงกัน
-            var password = document.getElementById('password')
-            var confirm_password = document.getElementById('confirm_password')
-            if (password.value !== confirm_password.value) {
-                confirm_password.setCustomValidity('รหัสผ่านไม่ตรงกัน')
-                event.preventDefault()
-                event.stopPropagation()
-            } else {
-                confirm_password.setCustomValidity('')
-            }
+                // ตรวจสอบรหัสผ่านตรงกัน
+                var password = document.getElementById('password')
+                var confirm_password = document.getElementById('confirm_password')
+                if (password.value !== confirm_password.value) {
+                    confirm_password.setCustomValidity('รหัสผ่านไม่ตรงกัน')
+                    event.preventDefault()
+                    event.stopPropagation()
+                } else {
+                    confirm_password.setCustomValidity('')
+                }
 
-            form.classList.add('was-validated')
-        }, false)
-    })
-})()
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
 
-// สลับการแสดงรหัสผ่าน
-function togglePassword(id) {
-    var input = document.getElementById(id);
-    var icon = input.nextElementSibling.querySelector('i');
-    
-    if (input.type === "password") {
-        input.type = "text";
-        icon.classList.remove("fa-eye");
-        icon.classList.add("fa-eye-slash");
-    } else {
-        input.type = "password";
-        icon.classList.remove("fa-eye-slash");
-        icon.classList.add("fa-eye");
+    // สลับการแสดงรหัสผ่าน
+    function togglePassword(id) {
+        var input = document.getElementById(id);
+        var icon = input.nextElementSibling.querySelector('i');
+        
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
     }
-}
-</script>
-
+    </script>
 </body>
 </html>
