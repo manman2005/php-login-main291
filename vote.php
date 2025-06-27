@@ -78,9 +78,10 @@ if ($active_election) {
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Kanit', sans-serif; background-color: #f8f9fa; }
-        .navbar { background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .navbar { background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%); padding: 1rem 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
         .navbar-brand { color: white !important; font-weight: 600; font-size: 1.5rem; }
-        .nav-link { color: rgba(255,255,255,0.9) !important; font-weight: 500; }
+        .navbar-brand img { width: 40px; height: 40px; object-fit: cover; border-radius: 50%; margin-right: 10px; border: 2px solid white;}
+        .nav-link { color: rgba(255,255,255,0.9) !important; font-weight: 500; transition: all 0.3s ease; }
         .nav-link:hover, .nav-link.active { color: white !important; }
         .user-info { color: white; padding: 0.5rem 1rem; border-radius: 50px; background: rgba(255,255,255,0.1);}
         .card { border: none; border-radius: 15px; transition: transform 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.1);}

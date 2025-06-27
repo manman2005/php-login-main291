@@ -61,9 +61,9 @@ $user = $_SESSION['user_login'];
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Kanit', sans-serif; background: #f5f5f5; }
+         body { font-family: 'Kanit', sans-serif; background: #f5f5f5; }
         .card { border-radius: 15px; }
-        .navbar { background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%); box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .navbar { background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%); padding: 1rem 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
         .navbar-brand { color: white !important; font-weight: 600; font-size: 1.5rem; }
         .navbar-brand img { width: 40px; height: 40px; object-fit: cover; border-radius: 50%; margin-right: 10px; border: 2px solid white;}
         .nav-link { color: rgba(255,255,255,0.9) !important; font-weight: 500; transition: all 0.3s ease; }
